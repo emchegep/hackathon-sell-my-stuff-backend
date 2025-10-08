@@ -1,0 +1,41 @@
+name: Publish Backend
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: "us-east-2"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  package_app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Package the Backend
+        run: |
+          ./package_code.sh
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Uploads the Packages to S3 Bucket
+        run: |
+          aws s3 sync lambda_package.zip s3://${{ secrets.AWS_S3_BUCKET }} --delete
+          aws s3 sync dependencies.zip s3://${{ secrets.AWS_S3_BUCKET }} --delete
+          
