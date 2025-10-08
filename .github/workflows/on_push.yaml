@@ -26,6 +26,7 @@ jobs:
 
       - name: Package the Backend
         run: |
+          chmod +x package_code.sh
           ./package_code.sh
 
       - name: Configure AWS Credentials
