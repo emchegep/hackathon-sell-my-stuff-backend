@@ -45,6 +45,7 @@ jobs:
 
   terraform:
     runs-on: ubuntu-latest
+    needs: lambda_packaging
     name: Deploy Backend infrastructure (API Gateway and Lambda function)
     defaults:
       run:
