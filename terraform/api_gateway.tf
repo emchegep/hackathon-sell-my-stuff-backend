@@ -28,3 +28,21 @@ resource "aws_api_gateway_stage" "sell_my_stuff" {
   rest_api_id   = aws_api_gateway_rest_api.sell_my_stuff.id
   stage_name    = "prod"
 }
+
+resource "aws_api_gateway_usage_plan" "sell_my_stuff" {
+  name = "sell-my-stuff-usage-plan"
+  api_stages {
+    api_id = aws_api_gateway_rest_api.sell_my_stuff.id
+    stage  = aws_api_gateway_stage.sell_my_stuff.stage_name
+  }
+}
+
+resource "aws_api_gateway_usage_plan_key" "sell_my_stuff" {
+  key_id        = aws_api_gateway_api_key.sell_my_stuff.id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.sell_my_stuff.id
+}
+
+resource "aws_api_gateway_api_key" "sell_my_stuff" {
+  name = "sell-my-stuff-api-key"
+}
